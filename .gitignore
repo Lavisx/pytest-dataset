@@ -3,6 +3,10 @@ __pycache__
 *.*~
 .idea/
 
+.eggs/
+build/
+pytest_dataset.egg-info/
+
 # =========================
 # OSX
 # =========================
