@@ -5,8 +5,7 @@ from setuptools import setup
 setup(
     name="pytest-dataset",
     use_scm_version=True,
-    description="Fixtures for pytest allowing test functions/methods to easily retrieve test "
-                "resources from the local filesystem.",
+    description="Plugin for loading different datasets for pytest by prefix from json or yaml files",
     # Read the long description from our README.rst file, as UTF-8.
     long_description=codecs.open(
             os.path.join(
@@ -16,16 +15,16 @@ setup(
             "rb",
             "utf-8"
         ).read(),
-    author="",
-    author_email="",
+    author="Lavisx",
+    author_email="lavis@seznam.cz",
     entry_points={
         "pytest11": [
             "pytest_dataset = pytest_dataset"
         ]
     },
-    url="",
+    url="https://github.com/Lavisx/pytest-dataset",
     py_modules=["pytest_dataset"],
-    install_requires=["pytest", "json", "pyaml"],
+    install_requires=["pytest", "pyjson", "pyaml"],
     setup_requires=["setuptools_scm ~= 6.0"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -44,9 +43,13 @@ setup(
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
 
         "Topic :: Software Development :: Testing"
     ],
     license="BSD 3-Clause License",
-    keywords="py.test resources files data directory directories",
+    keywords="py.test resources files data directory directories dataset json yaml",
 )
