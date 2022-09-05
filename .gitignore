@@ -4,6 +4,7 @@ __pycache__
 .idea/
 
 .eggs/
+dist/
 build/
 pytest_dataset.egg-info/
 

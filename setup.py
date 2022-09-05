@@ -15,6 +15,7 @@ setup(
             "rb",
             "utf-8"
         ).read(),
+    long_description_content_type="text/x-rst",
     author="Lavisx",
     author_email="lavis@seznam.cz",
     entry_points={

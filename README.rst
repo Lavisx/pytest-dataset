@@ -3,7 +3,7 @@ dataset plugin for pytest |pypi-badge|
 
 The ``dataset`` plugin for pytest_ provides the ``dataset``, ``dataset_case_data``
 and ``dataset_copy`` fixtures which allow test functions to easily access resources
-in data directories. It was inspired by the `pytest-datadir-ng plugin`_ .
+in data directories. It was inspired by the `pytest-datadir-ng plugin` .
 The ``dataset`` return data from files in ``json`` or ``yaml`` formats.
 The main function is usage parameter ``--dataset-prefix`` in options or ``dataset_prefix`` in ini file.
 
