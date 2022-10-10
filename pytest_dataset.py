@@ -59,7 +59,11 @@ class _Dataset(object):
             else:
                 self._datadirs.append(testdir.join(request.function.__name__))
             self._datadirs.append(testdir)
-        self._datadirs.append(datadir)
+        # add data dir to parent folders before rootdir
+        for d in reversed(basedir.parts()):
+            if d==request.config.rootdir:
+                break
+            self._datadirs.append(d.join("data"))
 
     def __getitem__(self, path):
         files = ["%s%s.yaml" % (self._dataset_prefix, path),
