@@ -39,7 +39,7 @@ def pytest_addoption(parser):
     parser.addini('dataset_prefix', help='prefix file name for used dataset for example testing4net used as {prefix}_{name}.(yaml|json)')
 
 class _Dataset(object):
-    def __init__(self, request):
+    def __init__(self, request, scope="function"):
         basedir = request.fspath.dirpath()
         datadir = basedir.join("data")
         self._dataset_prefix = request.config.getoption('--dataset-prefix') or request.config.getini('dataset_prefix')
@@ -49,16 +49,20 @@ class _Dataset(object):
         self._datadirs = []
 
         for d in (basedir, datadir):
-            testdir = d.join(request.module.__name__)
-            if request.cls is not None:
-                clsdir = testdir.join(request.cls.__name__)
-                self._datadirs.extend([
-                    clsdir.join(request.function.__name__),
-                    clsdir
-                ])
-            else:
-                self._datadirs.append(testdir.join(request.function.__name__))
-            self._datadirs.append(testdir)
+            if scope in ("module", "class", "function"):
+                testdir = d.join(request.module.__name__)
+                if scope in ("class", "function"):
+                    if request.cls is not None:
+                        clsdir = testdir.join(request.cls.__name__)
+                        if scope == "function":
+                            self._datadirs.extend([
+                                clsdir.join(request.function.__name__),
+                                clsdir
+                            ])
+                    else:
+                        if scope == "function":
+                            self._datadirs.append(testdir.join(request.function.__name__))
+                self._datadirs.append(testdir)
         # add data dir to parent folders before rootdir
         for d in reversed(basedir.parts()):
             if d==request.config.rootdir:
@@ -197,6 +201,21 @@ def dataset(request):
     """
     return _Dataset(request)
 
+@pytest.fixture(scope="module")
+def dataset_module(request):
+    """
+    Similar to dataset only used for scope `module`.
+    The path, where are searched the dataset files are reduced to only possible for `module` scope.
+    """
+    return _Dataset(request, scope="module")
+
+@pytest.fixture(scope="class")
+def dataset_class(request):
+    """
+    Similar to dataset only used for scope `class`.
+    The path, where are searched the dataset files are reduced to only possible for `class` scope.
+    """
+    return _Dataset(request, scope="class")
 
 @pytest.fixture
 def dataset_copy(request, tmpdir):
