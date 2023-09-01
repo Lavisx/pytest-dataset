@@ -34,22 +34,27 @@ import pytest
 import json
 import yaml
 
+
 def pytest_addoption(parser):
-    parser.addoption('--dataset-prefix', help='prefix file name for used dataset for example testing4net used as {prefix}_{name}.(yaml|json)')
-    parser.addini('dataset_prefix', help='prefix file name for used dataset for example testing4net used as {prefix}_{name}.(yaml|json)')
+    parser.addoption('--dataset-prefix',
+                     help='prefix file name for used dataset for example testing4net used as {prefix}_{name}.(yaml|json)')
+    parser.addini('dataset_prefix',
+                  help='prefix file name for used dataset for example testing4net used as {prefix}_{name}.(yaml|json)')
+
 
 class _Dataset(object):
     def __init__(self, request, scope="function"):
-        basedir = request.fspath.dirpath()
-        datadir = basedir.join("data")
+
         self._dataset_prefix = request.config.getoption('--dataset-prefix') or request.config.getini('dataset_prefix')
         if self._dataset_prefix:
-            self._dataset_prefix = self._dataset_prefix +"_"
+            self._dataset_prefix = self._dataset_prefix + "_"
 
         self._datadirs = []
 
-        for d in (basedir, datadir):
-            if scope in ("module", "class", "function"):
+        if scope in ("module", "class", "function"):
+            basedir = request.fspath.dirpath()
+            datadir = basedir.join("data")
+            for d in (basedir, datadir):
                 testdir = d.join(request.module.__name__)
                 if scope in ("class", "function"):
                     if request.cls is not None:
@@ -63,15 +68,17 @@ class _Dataset(object):
                         if scope == "function":
                             self._datadirs.append(testdir.join(request.function.__name__))
                 self._datadirs.append(testdir)
-        # add data dir to parent folders before rootdir
-        for d in reversed(basedir.parts()):
-            if d==request.config.rootdir:
-                break
-            self._datadirs.append(d.join("data"))
+            # add data dir to parent folders before rootdir
+            for d in reversed(basedir.parts()):
+                self._datadirs.append(d.join("data"))
+                if d == request.config.rootdir:
+                    break
+        else:
+            self._datadirs.append(request.config.rootdir.join("data"))
 
     def __getitem__(self, path):
         files = ["%s%s.yaml" % (self._dataset_prefix, path),
-                       "%s%s.json" % (self._dataset_prefix, path)]
+                 "%s%s.json" % (self._dataset_prefix, path)]
         if self._dataset_prefix:
             files.append("%s.yaml" % path)
             files.append("%s.json" % path)
@@ -201,6 +208,25 @@ def dataset(request):
     """
     return _Dataset(request)
 
+
+@pytest.fixture(scope="session")
+def dataset_session(request):
+    """
+    Similar to dataset only used for scope `session`.
+    The path, where are searched the dataset files are reduced to only {rootdir}/data/ .
+    """
+    return _Dataset(request, scope="session")
+
+
+@pytest.fixture(scope="package")
+def dataset_package(request):
+    """
+    Similar to dataset only used for scope `package`.
+    The path, where are searched the dataset files are reduced to only {rootdir}/data/ .
+    """
+    return _Dataset(request, scope="package")
+
+
 @pytest.fixture(scope="module")
 def dataset_module(request):
     """
@@ -209,6 +235,7 @@ def dataset_module(request):
     """
     return _Dataset(request, scope="module")
 
+
 @pytest.fixture(scope="class")
 def dataset_class(request):
     """
@@ -216,6 +243,7 @@ def dataset_class(request):
     The path, where are searched the dataset files are reduced to only possible for `class` scope.
     """
     return _Dataset(request, scope="class")
+
 
 @pytest.fixture
 def dataset_copy(request, tmpdir):
@@ -250,6 +278,7 @@ def dataset_copy(request, tmpdir):
             fh = resource1.open("rb")
     """
     return _DatasetCopy(request, tmpdir)
+
 
 @pytest.fixture
 def dataset_case_data(request):

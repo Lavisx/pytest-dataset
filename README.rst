@@ -118,6 +118,22 @@ is the place for global (or fallback) resources.
 If a resource cannot be found in *any* of the searched directories, a
 `KeyError` is raised.
 
+.. _dataset_session:
+
+The dataset_session fixture
+---------------------------
+
+Similar to "dataset" only used for scope "session".
+The path, where are searched the dataset files are reduced to only {rootdir}/data/ .
+
+.. _dataset_package:
+
+The dataset_package fixture
+---------------------------
+
+Similar to "dataset" only used for scope "package".
+The path, where are searched the dataset files are reduced to only {rootdir}/data/ .
+
 .. _dataset_module:
 
 The dataset_module fixture
@@ -126,8 +142,6 @@ The dataset_module fixture
 Similar to "dataset" only used for scope "module".
 The path, where are searched the dataset files are reduced to only possible for "module" scope.
 
-.. _dataset_copy:
-
 .. _dataset_class:
 
 The dataset_class fixture
@@ -135,6 +149,8 @@ The dataset_class fixture
 
 Similar to "dataset" only used for scope "class".
 The path, where are searched the dataset files are reduced to only possible for "class" scope.
+
+.. _dataset_copy:
 
 The dataset_copy fixture
 ------------------------
